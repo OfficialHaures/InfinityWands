@@ -1,0 +1,19 @@
+name: InfinityWands
+version: '${project.version}'
+main: nl.inferno.infinityWands.InfinityWands
+api-version: '1.20'
+commands:
+  bind:
+    description: Bind een spreuk aan je toverstaf
+    usage: /bind <spell> <slot>
+  wandinfo:
+    description: Bekijk informatie over je toverstaf
+    usage: /wandinfo
+  getwand:
+    description: Gives the player a wand
+  spellbook:
+    description: Open je spreukboek
+    usage: /spellbook
+  unbind:
+    description: Verwijder een spreuk van je toverstaf
+    usage: /unbind <slot>
