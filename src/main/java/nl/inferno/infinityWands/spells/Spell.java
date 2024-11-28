@@ -30,9 +30,9 @@ public abstract class Spell {
         }
     }
 
-    // Getters
     public String getName() { return name; }
     public int getCooldown() { return cooldown; }
     public double getManaCost() { return manaCost; }
     public Particle getParticle() { return particle; }
+
 }

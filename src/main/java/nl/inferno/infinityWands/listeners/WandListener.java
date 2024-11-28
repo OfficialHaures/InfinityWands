@@ -1,5 +1,6 @@
 package nl.inferno.infinityWands.listeners;
 
+import nl.inferno.infinityWands.InfinityWands;
 import nl.inferno.infinityWands.managers.SpellManager;
 import nl.inferno.infinityWands.spells.Spell;
 import nl.inferno.infinityWands.utils.WandUtils;
@@ -15,6 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Map;
 
@@ -78,16 +80,13 @@ public class WandListener implements Listener {
             SpellManager.setActiveSpell(player, nextSlot);
             Spell newSpell = SpellManager.getSpell(player, nextSlot);
 
-            // Visual effects
             Location loc = player.getLocation().add(0, 1, 0);
             player.getWorld().spawnParticle(Particle.SPELL_WITCH, loc, 15, 0.2, 0.2, 0.2, 0);
             player.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, loc, 20, 0.5, 0.5, 0.5, 0);
 
-            // Sound effects
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.0f, 1.5f);
             player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.5f, 1.2f);
 
-            // Visual feedback
             String spellName = ChatColor.GOLD + newSpell.getName();
             String mana = ChatColor.AQUA + "Mana: " + newSpell.getManaCost();
             String cooldown = ChatColor.GREEN + "CD: " + newSpell.getCooldown() + "s";
@@ -120,13 +119,48 @@ public class WandListener implements Listener {
 
     private void castSpell(Player player, Spell spell) {
         if (SpellManager.canCastSpell(player, spell)) {
-            spell.cast(player);
+            Location playerLoc = player.getLocation();
+            Location eyeLoc = player.getEyeLocation();
 
-            Location loc = player.getLocation().add(0, 1, 0);
-            player.getWorld().spawnParticle(Particle.SPELL_WITCH, loc, 30, 0.3, 0.3, 0.3, 0.1);
-            player.playSound(player.getLocation(), Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 1.0f);
+            new BukkitRunnable() {
+                double y = 0;
+                int ticks = 0;
+
+                @Override
+                public void run() {
+                    if (ticks >= 10) {
+                        spell.cast(player);
+
+                        player.getWorld().spawnParticle(Particle.FLASH, eyeLoc, 2, 0, 0, 0, 0);
+                        player.getWorld().spawnParticle(Particle.SPELL_WITCH, eyeLoc, 30, 0.3, 0.3, 0.3, 0.1);
+                        player.getWorld().spawnParticle(Particle.DRAGON_BREATH, eyeLoc, 15, 0.2, 0.2, 0.2, 0.05);
+                        player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 1.0f);
+                        cancel();
+                        return;
+                    }
+
+                    for (double i = 0; i < Math.PI * 2; i += Math.PI / 8) {
+                        double x = Math.cos(i + ticks) * 1.5;
+                        double z = Math.sin(i + ticks) * 1.5;
+                        Location particleLoc = playerLoc.clone().add(x, y, z);
+
+                        player.getWorld().spawnParticle(Particle.SPELL_WITCH, particleLoc, 1, 0, 0, 0, 0);
+                        player.getWorld().spawnParticle(Particle.SPELL_INSTANT, particleLoc, 1, 0, 0, 0, 0);
+                        player.getWorld().spawnParticle(Particle.END_ROD, particleLoc, 1, 0, 0, 0, 0.05);
+                    }
+
+                    if (ticks % 2 == 0) {
+                        player.playSound(playerLoc, Sound.BLOCK_BEACON_AMBIENT, 0.5f, 1.0f + (ticks * 0.1f));
+                    }
+
+                    y += 0.2;
+                    ticks++;
+                }
+            }.runTaskTimer(InfinityWands.getInstance(), 0L, 1L);
         }
     }
+
+
 
     private void showActiveSpell(Player player, int slot) {
         Spell spell = SpellManager.getSpell(player, slot);
