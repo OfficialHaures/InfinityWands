@@ -3,9 +3,7 @@ package nl.inferno.infinityWands;
 import nl.inferno.infinityWands.commands.WandCommands;
 import nl.inferno.infinityWands.listeners.WandListener;
 import nl.inferno.infinityWands.managers.SpellManager;
-import nl.inferno.infinityWands.spells.FireballSpell;
-import nl.inferno.infinityWands.spells.FrostNovaSpell;
-import nl.inferno.infinityWands.spells.TornadoSpell;
+import nl.inferno.infinityWands.spells.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class InfinityWands extends JavaPlugin {
@@ -39,6 +37,8 @@ public final class InfinityWands extends JavaPlugin {
         SpellManager.registerSpell(new FireballSpell());
         SpellManager.registerSpell(new FrostNovaSpell());
         SpellManager.registerSpell(new TornadoSpell());
+        SpellManager.registerSpell(new ConvulsionSpell());
+        
     }
 
     @Override

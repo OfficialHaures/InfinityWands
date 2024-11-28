@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
+
 public abstract class Spell {
     private final String name;
     private final int cooldown;
