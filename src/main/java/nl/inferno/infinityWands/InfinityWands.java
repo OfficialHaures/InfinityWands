@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class InfinityWands extends JavaPlugin {
 
     private static InfinityWands instance;
+
     private SpellManager spellManager;
 
     @Override
@@ -38,7 +39,7 @@ public final class InfinityWands extends JavaPlugin {
         SpellManager.registerSpell(new FrostNovaSpell());
         SpellManager.registerSpell(new TornadoSpell());
         SpellManager.registerSpell(new ConvulsionSpell());
-        
+        SpellManager.registerSpell(new BlueBeamSpell());
     }
 
     @Override
